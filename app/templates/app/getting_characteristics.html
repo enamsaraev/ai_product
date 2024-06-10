@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 mx-auto">
+			<div class="mt-5">
+				<form id="form">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="id_product_code">Example label</label>
+						{{ form.product_code }}
+					</div>
+					<button type="button" id="form_submit_btn" class="btn btn-outline-success">
+						Получить
+					</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}
+
+{% block jsend %}
+<script>
+	document.getElementById("form_submit_btn").addEventListener("click", form_submit);
+	function form_submit() {
+		f = document.getElementById("form");
+		formdata = new FormData(f);
+		$.ajax({
+			type: "POST",
+			url: "{% url 'app:getting_characteristics' %}",
+			data: formdata,
+			contentType: false,
+  			processData: false,
+			dataType: 'json',
+			headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+
+			success:function(json){
+				document.location.href = document.location.href;
+			},
+			error : function(data) {
+				console.log(data);
+			}
+		});
+	}
+</script>
+{% endblock jsend %}

@@ -1,0 +1,44 @@
+{% load static %}
+
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <link rel="shortcut icon" href="{% static "favicon.ico" %}" />
+		<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+		<link rel="stylesheet" href="{% static "css/style.css" %}" />
+
+		<title>{% block title %}{% endblock title %}</title>
+        {% block head %}{% endblock head %}
+    </head>
+    <div class="d-flex" id="wrapper">
+		<!-- Sidebar-->
+		<div class="border-end bg-white" id="sidebar-wrapper">
+			<div class="sidebar-heading border-bottom bg-light">Команда</div>
+			{% include "menu.html" %}
+		</div>
+		<!-- Page content wrapper-->
+		<div id="page-content-wrapper">
+			<!-- Top navigation-->
+			<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+				<div class="container-fluid">
+					<button class="btn btn-primary" id="sidebarToggle">Скрыть меню</button>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+				</div>
+			</nav>
+			<!-- Page content-->
+			<div class="container-fluid">
+				{% block content %}{% endblock content %}
+			</div>
+		</div>
+
+	<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/popper.js' %}"></script>
+	<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/script.js' %}"></script>
+
+	{% block jsend %}
+	{% endblock jsend %}
+</html>
