@@ -84,8 +84,8 @@ if not DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'ai_db',
-            'USER': 'ai_user',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
             'PASSWORD': config('DB_PASSWORD'),
             'HOST': 'localhost',
             'PORT': '',
@@ -152,3 +152,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CELERY_BROKER_URL = config('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND')
