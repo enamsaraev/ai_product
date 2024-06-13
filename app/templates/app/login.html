@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-8 mx-auto">
+			<div class="grid gap-0 row-gap-3">
+				<div class="col mt-5">
+					<h3 class="font-weight-bold">Введите имя пользователя для сохранения данных</h3>
+				</div>
+				<div class="col mt-5">
+					<form method="POST" id="form">
+						{% csrf_token %}
+						<div class="form-group">
+							<label for="id_username">Имя пользователя</label>
+							<input type="text" name="username" class="form-control" id="id_username" required="">
+						</div>
+						<button type="submit" id="form_submit_btn" class="btn btn-outline-success">
+							Войти
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock content %}

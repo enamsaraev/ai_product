@@ -55,6 +55,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+LOGIN_URL = 'app:login'
+LOGOUT_URL = 'app:login'
+
+AUTHENTICATION_BACKENDS = [
+    'ai.service.passwordless_auth_backend.PasswordlessAuthBackend',
+]
 
 ROOT_URLCONF = 'ai.urls'
 
@@ -126,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
@@ -155,3 +161,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CELERY_BROKER_URL = config('CELERY_BROKER_URL')
 CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND')
+
+SESSION_COOKIE_AGE = 8 * 60 * 60  # 8 hours
+SESSION_SAVE_EVERY_REQUEST = True

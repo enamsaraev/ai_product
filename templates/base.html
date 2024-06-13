@@ -13,31 +13,56 @@
 		<title>{% block title %}{% endblock title %}</title>
         {% block head %}{% endblock head %}
     </head>
-    <div class="d-flex" id="wrapper">
-		<!-- Sidebar-->
-		<div class="border-end bg-white" id="sidebar-wrapper">
-			<div class="sidebar-heading border-bottom bg-light">Команда</div>
-			{% include "menu.html" %}
-		</div>
-		<!-- Page content wrapper-->
-		<div id="page-content-wrapper">
-			<!-- Top navigation-->
-			<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+	<body>
+		<div class="d-flex" id="wrapper">
+			<!-- Sidebar-->
+			<div class="border-end bg-white" id="sidebar-wrapper">
+				<div class="sidebar-heading border-bottom bg-light">Команда</div>
+				{% include "menu.html" %}
+			</div>
+			<!-- Page content wrapper-->
+			<div id="page-content-wrapper">
+				<!-- Top navigation-->
+				<nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+					<div class="container-fluid">
+						<button class="btn btn-primary" id="sidebarToggle">Меню</button>
+						<form method="POST" action={% url 'app:logout' %}>
+							{% csrf_token %}
+							<button type="submit" lass="btn btn-outline-primary">
+								Выйти
+							</button>
+						</form>
+					</div>
+				</nav>
+				<!-- Page content-->
 				<div class="container-fluid">
-					<button class="btn btn-primary" id="sidebarToggle">Скрыть меню</button>
-					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+					{% block content %}{% endblock content %}
 				</div>
-			</nav>
-			<!-- Page content-->
-			<div class="container-fluid">
-				{% block content %}{% endblock content %}
+			</div>
+
+			<div class="modal" tabindex="-1" role="dialog" id="modal_error">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Ошибка</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<p id="error_msg"></p>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
+	</body>
 
 	<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/popper.js' %}"></script>
 	<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/script.js' %}"></script>
+	<script type="text/javascript" src="{% static 'datatable/datatables.min.js' %}"></script>
 
 	{% block jsend %}
 	{% endblock jsend %}

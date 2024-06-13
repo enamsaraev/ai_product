@@ -4,28 +4,119 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-6 mx-auto">
-			<div class="mt-5">
-				<form id="form">
-					{% csrf_token %}
-					<div class="form-group">
-						<label for="id_product_code">Example label</label>
-						{{ form.x }}
-					</div>
-					<div class="form-group">
-						<label for="id_product_code">Example label2</label>
-						{{ form.y }}
-					</div>
-					<button type="button" id="form_submit_btn" class="btn btn-outline-success">
-						Получить
-					</button>
-				</form>
+			<div class="grid gap-0 row-gap-3">
+				<div class="col mt-5">
+					<h3 class="font-weight-bold">Данные о товаре</h3>
+				</div>
+				<div class="col mt-5">
+					<form id="form">
+						{% csrf_token %}
+						<div class="form-group">
+							<label for="id_product_code">Код товара</label>
+							{{ form.product_code }}
+						</div>
+						<div class="form-group">
+							<label for="id_product_code">Полное наименование</label>
+							{{ form.product_name }}
+						</div>
+						<div class="form-group">
+							<label for="id_product_code">Тип</label>
+							{{ form.product_type }}
+						</div>
+						<div class="form-group">
+							<label for="id_product_code">Бренд</label>
+							{{ form.product_brand }}
+						</div>
+						<div class="form-group">
+							<label for="id_product_code">Серия</label>
+							{{ form.product_series }}
+						</div>
+						<div class="form-group">
+							<label for="id_product_code">Модель</label>
+							{{ form.product_model }}
+						</div>
+						<div class="form-group">
+							<label for="id_product_code">Partnumber</label>
+							{{ form.product_partnumber }}
+						</div>
+						<button type="button" id="form_submit_btn" class="btn btn-outline-success">
+							Получить
+						</button>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>
+	{% if gpt_requests %}
+	<div class="row">
+		<div class="col mt-5">
+			<table id="datatble_1" width="100%">
+				<thead>
+					<tr>
+						<th width="60%">Отправленные данные</th>
+						<th width="10%">Статус</th>
+						<th width="30%" class="text-center">Действия</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for gr in gpt_requests %}
+						<tr>
+							<td>
+								Код товара: {{ gr.user_product_data.product_code }}<br>
+								Полное наименование: {{ gr.user_product_data.product_name }}<br>
+								Тип: {{ gr.user_product_data.product_type }}<br>
+								Бренд: {{ gr.user_product_data.product_brand }}<br>
+								Серия: {{ gr.user_product_data.product_series }}<br>
+								Модель: {{ gr.user_product_data.product_model }}<br>
+								Partnumber: {{ gr.user_product_data.product_partnumber }}<br>
+							</td>
+							<td id="status_{{forloop.counter}}">{{ gr.status }}</td>
+							<td class="text-center">
+								<div class="row justify-content-center">
+								{% if gr.status == "Успешно" %}
+									<div class="col-8">
+										<a href="" class="btn bt-sm btn-success">
+											Посмотреть результат
+										</a>
+									</div>
+								{% else %}
+									<div class="col-8">
+										<button type="button" id="id_status_{{forloop.counter}}" onclick="check_status('{{forloop.counter}}', {{ gr.id }})" class="btn bt-sm btn-outline-warning">
+											Обновить статус
+										</button>
+									</div>
+									<div class="col-8">
+										<a href="" id="id_result_{{forloop.counter}}" class="btn bt-sm btn-success" hidden>
+											Посмотреть результат
+										</a>
+									</div>
+								{% endif %}
+								</div>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	{% endif %}
 </div>
 {% endblock content %}
 
 {% block jsend %}
+<script>
+	$("#datatble_1").DataTable({
+		"paging": false,
+		"searching": false,
+		"info": false,
+		"columnDefs": [{
+			"targets": '_all',
+			"createdCell": function (td, cellData, rowData, row, col) {
+				$(td).css('padding', '10px')
+			}
+		}]
+	})
+</script>
 <script>
 	document.getElementById("form_submit_btn").addEventListener("click", form_submit);
 	function form_submit() {
@@ -40,12 +131,37 @@
 			dataType: 'json',
 			headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
 
-			success:function(json){
-				document.location.href = document.location.href;
+			success: function(data) {
+				window.location.href = window.location.href;
 			},
-			error : function(data) {
-				console.log(data);
+			error: function(data) {
+				document.getElementById("error_msg").innerText = data.responseJSON.msg;
+				$("#modal_error").modal('show');
 			}
+		});
+	}
+</script>
+<script>
+	function check_status(row_id, gr_id) {
+		$.ajax({
+		type: "POST",
+		url: "{% url 'app:gr_status' %}",
+		data: {"gr_id": gr_id},
+		dataType: 'json',
+		headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+
+		success: function(data) {
+			document.getElementById(`status_${row_id}`).innerText = data.status;
+			console.log(data.status)
+			if (data.status == "Успешно") {
+				document.getElementById(`id_status_${row_id}`).hidden = true;
+				document.getElementById(`id_result_${row_id}`).hidden = false;
+			}
+		},
+		error: function(data) {
+			document.getElementById("error_msg").innerText = data.responseJSON.msg;
+			$("#modal_error").modal('show');
+		}
 		});
 	}
 </script>
