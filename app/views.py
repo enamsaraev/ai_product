@@ -28,7 +28,7 @@ class LoginPage(View):
 		login(request, user)
 
 		next_page = request.GET.get('next', '')
-		return redirect(next_page) if next_page else redirect('app:main_page')
+		return redirect(next_page) if next_page else redirect('app:getting_characteristics')
 	
 
 class LogoutView(View):
