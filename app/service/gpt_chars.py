@@ -93,7 +93,7 @@ class RequestData:
 		]
 
 		try:
-			response = requests.post(self.url, headers={'Authorization': 'Bearer ' + self.token}, json=data).json()
+			response = requests.post(self.url, headers={'Authorization': f'Api-Key {self.token}'}, json=data).json()
 		except Exception:
 			return {}
 		
@@ -153,7 +153,7 @@ class GPTProductCharacteristics:
 		]
 
 		try:
-			response = requests.post(self.url, headers={'Authorization': 'Bearer ' + self.token}, json=data).json()
+			response = requests.post(self.url, headers={'Authorization': f'Api-Key {self.token}'}, json=data).json()
 		except Exception:
 			return {}
 		
