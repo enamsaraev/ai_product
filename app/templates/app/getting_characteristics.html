@@ -20,27 +20,19 @@
 							{{ form.product_name }}
 						</div>
 						<div class="form-group">
-							<label for="id_product_code">Тип</label>
-							{{ form.product_type }}
-						</div>
-						<div class="form-group">
 							<label for="id_product_code">Бренд</label>
 							{{ form.product_brand }}
-						</div>
-						<div class="form-group">
-							<label for="id_product_code">Серия</label>
-							{{ form.product_series }}
 						</div>
 						<div class="form-group">
 							<label for="id_product_code">Модель</label>
 							{{ form.product_model }}
 						</div>
 						<div class="form-group">
-							<label for="id_product_code">Partnumber</label>
+							<label for="id_product_code">Артикул</label>
 							{{ form.product_partnumber }}
 						</div>
 						<button type="button" id="form_submit_btn" class="btn btn-outline-success">
-							Получить
+							Получить характеристики
 						</button>
 					</form>
 				</div>
@@ -53,7 +45,8 @@
 			<table id="datatble_1" width="100%">
 				<thead>
 					<tr>
-						<th width="60%">Отправленные данные</th>
+						<th>ID</th>
+						<th width="55%">Отправленные данные</th>
 						<th width="10%">Статус</th>
 						<th width="30%" class="text-center">Действия</th>
 					</tr>
@@ -61,12 +54,11 @@
 				<tbody>
 					{% for gr in gpt_requests %}
 						<tr>
+							<td>{{ gr.id }}</td>
 							<td>
 								Код товара: {{ gr.user_product_data.product_code }}<br>
 								Полное наименование: {{ gr.user_product_data.product_name }}<br>
-								Тип: {{ gr.user_product_data.product_type }}<br>
 								Бренд: {{ gr.user_product_data.product_brand }}<br>
-								Серия: {{ gr.user_product_data.product_series }}<br>
 								Модель: {{ gr.user_product_data.product_model }}<br>
 								Partnumber: {{ gr.user_product_data.product_partnumber }}<br>
 							</td>
@@ -75,7 +67,7 @@
 								<div class="row justify-content-center">
 								{% if gr.status == "Успешно" %}
 									<div class="col-8">
-										<a href="" class="btn bt-sm btn-success">
+										<a href="{% url 'app:detail_characteristics' gr.id %}" class="btn bt-sm btn-success">
 											Посмотреть результат
 										</a>
 									</div>
@@ -86,7 +78,7 @@
 										</button>
 									</div>
 									<div class="col-8">
-										<a href="" id="id_result_{{forloop.counter}}" class="btn bt-sm btn-success" hidden>
+										<a href="{% url 'app:detail_characteristics' gr.id %}" id="id_result_{{forloop.counter}}" class="btn bt-sm btn-success" hidden>
 											Посмотреть результат
 										</a>
 									</div>
@@ -109,6 +101,7 @@
 		"paging": false,
 		"searching": false,
 		"info": false,
+		"ordering": false,
 		"columnDefs": [{
 			"targets": '_all',
 			"createdCell": function (td, cellData, rowData, row, col) {
@@ -152,8 +145,7 @@
 
 		success: function(data) {
 			document.getElementById(`status_${row_id}`).innerText = data.status;
-			console.log(data.status)
-			if (data.status == "Успешно") {
+			if (data.status != "В обработке") {
 				document.getElementById(`id_status_${row_id}`).hidden = true;
 				document.getElementById(`id_result_${row_id}`).hidden = false;
 			}

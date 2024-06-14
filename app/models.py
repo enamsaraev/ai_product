@@ -44,7 +44,7 @@ class UserProductData(models.Model):
 class GPTRequest(models.Model):
 	STATUSES = (
 		('Ошибка', 'Ошибка'),
-		('Обрабатывается', 'Обрабатывается'),
+		('В обработке', 'В обработке'),
 		('Успешно', 'Успешно'),
 	)
 	user_product_data = models.ForeignKey(
@@ -66,5 +66,9 @@ class GPTRequest(models.Model):
 	response = models.JSONField(
 		verbose_name='Ответ GPT',
 		null=True,
+		blank=True
+	)
+	help_message = models.TextField(
+		verbose_name='Вспомогательное сообщение',
 		blank=True
 	)

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		{% if chars %}
+			<h3>Характеристики товара</h3>
+			<p>Код товара: {{ obj.user_product_data.product_code }}</p>
+			<p>Наименование товара: {{ obj.user_product_data.product_name }}</p>
+			<p>Бренд: {{ obj.user_product_data.product_brand }}</p>
+			<p>Модель: {{ obj.user_product_data.product_model }}</p>
+			<p>Артикул: {{ obj.user_product_data.product_partnumber }}</p>
+			<div class="col mt-5 col-md-6 mx-auto">
+				<table id="datatble_1" width="100%">
+					<thead>
+						<tr>
+							<th width="70%">Характеристика</th>
+							<th width="30%">Значение</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for k, v in chars %}
+							<tr>
+								<td>{{ k }}</td>
+								<td>{{ v }}</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		{% else %}
+			<h3>Нет данных об этом товаре</h3>
+		{% endif %}
+	</div>
+</div>
+{% endblock content %}
+
+{% block jsend %}
+<script>
+	$("#datatble_1").DataTable({
+		"paging": false,
+		"searching": false,
+		"info": false,
+		"ordering": false,
+		"columnDefs": [{
+			"targets": '_all',
+			"createdCell": function (td, cellData, rowData, row, col) {
+				$(td).css('padding', '10px')
+			}
+		}]
+	})
+</script>
+{% endblock jsend %}

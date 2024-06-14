@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [config('PROD_ALLOWED_HOSTS'), 'localhost', '127.0.0.1']
 
@@ -42,8 +42,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'drf_spectacular',
 	
     'app',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -63,6 +65,21 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 ROOT_URLCONF = 'ai.urls'
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Документация API',
+    'DESCRIPTION': '',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'REDOC_UI_SETTINGS': {
+        'hideDownloadButton': True,
+        'sortTagsAlphabetically': True
+    }
+}
 
 TEMPLATES = [
     {

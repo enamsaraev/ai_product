@@ -1,3 +1,5 @@
+import json
+
 from django.views import View
 from django.views.generic import FormView
 from django.shortcuts import render, redirect
@@ -26,19 +28,13 @@ class LoginPage(View):
 		login(request, user)
 
 		next_page = request.GET.get('next', '')
-		return redirect(next_page)
+		return redirect(next_page) if next_page else redirect('app:main_page')
 	
 
 class LogoutView(View):
 	def post(self, request, *args, **kwargs):
 		logout(request)
 		return redirect(reverse('app:login'))
-	
-
-@method_decorator(login_required, name='dispatch')
-class MainPage(View):
-	def get(self, request, *args, **kwargs):
-		return render(request, 'app/main.html')
 	
 
 @method_decorator(login_required, name='dispatch')
@@ -62,7 +58,15 @@ class GettingCharacteristicsView(View):
 			user=request.user,
 			status=GPTRequest.STATUSES[1][1],
 		)
-		# get_product_characteristics.apply_async(args=(gpt_request))
+		get_product_characteristics.apply_async(args=(
+				gpt_request.id, 
+				form.cleaned_data.get('product_code'),
+				form.cleaned_data.get('product_name'),
+				form.cleaned_data.get('product_brand'),
+				form.cleaned_data.get('product_model'),
+				form.cleaned_data.get('product_partnumber'),
+			)
+		)
 		
 		return JsonResponse({}, status=200)
 	
@@ -76,6 +80,7 @@ class GettingCharacteristicsView(View):
 		return JsonResponse(data, status=status)
 
 
+@method_decorator(login_required, name='dispatch')
 class CheckGPTRequestStatus(View):
 	def post(self, request, *args, **kwargs):
 		gr_id = request.POST.get('gr_id')
@@ -83,10 +88,22 @@ class CheckGPTRequestStatus(View):
 		if not gpt_request:
 			return self.error_message('Во время проверки статуса произошла ошибка, попробуйте позднее', 500)
 		
-		gpt_request.status = GPTRequest.STATUSES[2][0]
-		gpt_request.save()
 		return JsonResponse({'status': gpt_request.status}, status=200)
 	
 	def error_message(self, msg, status):
 		data = {'msg': msg}
 		return JsonResponse(data, status=status)
+	
+
+@method_decorator(login_required, name='dispatch')
+class DetailCharacteristics(View):
+	def get(self, request, *args, **kwargs):
+		context = dict()
+
+		chars = GPTRequest.objects.filter(id=kwargs.get('id')).first()
+		if chars and chars.response:
+			data = json.loads(chars.response)
+			context['chars'] = data.items()
+			context['obj'] = chars
+
+		return render(request, 'app/characteristics_detail.html', context=context)
